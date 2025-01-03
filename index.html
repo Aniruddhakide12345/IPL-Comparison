@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Comparison</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f3e5f5; /* Light lavender */
+            color: #212121; /* Dark gray */
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #6a1b9a; /* Purple */
+        }
+        .selection-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .select-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 12px;
+            color: #7b2cbf;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        select {
+            width: 100%;
+            padding: 12px 40px 12px 20px;
+            border: 2px solid #7b2cbf;
+            border-radius: 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            appearance: none;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a154b;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        select:hover {
+            border-color: #5a189a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        select:focus {
+            border-color: #5a189a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.2);
+        }
+        select option {
+            padding: 12px;
+            font-weight: bold;
+            background: white;
+            color: #4a154b;
+        }
+        .compare-btn {
+            background: #c5cae9; /* Light purple */
+            color: #6a1b9a; /* Purple */
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .compare-btn:hover {
+            background: #5a189a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #000;
+            display: none;
+        }
+        .loading.active {
+            display: block;
+        }
+        .stat-comparison:nth-child(1) { animation-delay: 0.1s; }
+        .stat-comparison:nth-child(2) { animation-delay: 0.2s; }
+        .stat-comparison:nth-child(3) { animation-delay: 0.3s; }
+        .stat-comparison:nth-child(4) { animation-delay: 0.4s; }
+        .stat-comparison:nth-child(5) { animation-delay: 0.5s; }
+        .stat-comparison:nth-child(6) { animation-delay: 0.6s; }
+        .player-headers {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        .player-images {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            gap: 50px;
+            padding: 0 20px;
+        }
+        .player-image-container {
+            flex: 0 0 250px;
+            height: 250px;
+            border: 2px solid black;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease;
+        }
+        .player-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .player-image-container:hover .player-image {
+            transform: scale(1.1);
+        }
+        .stat-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .value-container {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .left-value {
+            justify-content: flex-end;
+        }
+
+        .right-value {
+            justify-content: flex-start;
+        }
+
+        .stat-label {
+            width: 120px;
+            text-align: center;
+            font-weight: bold;
+            color: #6a1b9a; /* Purple */
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-comparison:nth-child(1) { animation-delay: 0.1s; }
+        .stat-comparison:nth-child(2) { animation-delay: 0.2s; }
+        .stat-comparison:nth-child(3) { animation-delay: 0.3s; }
+        .stat-comparison:nth-child(4) { animation-delay: 0.4s; }
+        .stat-comparison:nth-child(5) { animation-delay: 0.5s; }
+        .stat-comparison:nth-child(6) { animation-delay: 0.6s; }
+        .stat-comparison:nth-child(7) { animation-delay: 0.7s; }
+        .stat-comparison:nth-child(8) { animation-delay: 0.8s; }
+        .stat-comparison:nth-child(9) { animation-delay: 0.9s; }
+
+        .stat-bar {
+            transition: all 0.3s ease;
+        }
+
+        .stat-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            filter: brightness(1.1);
+        }
+
+        .stat-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IPL Comparison</h1>
+        <div class="selection-container">
+            <div class="select-wrapper">
+                <select id="player1Select"></select>
+            </div>
+            <button class="compare-btn">VS</button>
+            <div class="select-wrapper">
+                <select id="player2Select"></select>
+            </div>
+        </div>
+        
+        <div class="player-images">
+            <div class="player-image-container">
+                <img id="player1Image" src="" alt="Player 1" class="player-image">
+            </div>
+            <div class="player-image-container">
+                <img id="player2Image" src="" alt="Player 2" class="player-image">
+            </div>
+        </div>
+
+        <div class="player-headers">
+            <span id="player1Name" class="player-name"></span>
+            <span id="player2Name" class="player-name"></span>
+        </div>
+
+        <div class="loading">Comparing stats...</div>
+
+        <div id="statsContainer">
+            <!-- Stats will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const apiBaseUrl = 'http://127.0.0.1:5000';
+        const player1Select = document.getElementById('player1Select');
+        const player2Select = document.getElementById('player2Select');
+        const player1Name = document.getElementById('player1Name');
+        const player2Name = document.getElementById('player2Name');
+        const statsContainer = document.getElementById('statsContainer');
+        const loading = document.querySelector('.loading');
+        
+        async function loadPlayers() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/players`);
+                if (!response.ok) throw new Error('Failed to load players');
+                const players = await response.json();
+                
+                const options = players.map(player => 
+                    `<option value="${player}">${player}</option>`
+                ).join('');
+                
+                player1Select.innerHTML = options;
+                player2Select.innerHTML = options;
+                if (players.length > 1) {
+                    player2Select.selectedIndex = 1;
+                }
+
+                updatePlayerNames();
+            } catch (error) {
+                console.error('Error loading players:', error);
+            }
+        }
+
+        function updatePlayerNames() {
+            const player1SelectedName = player1Select.value;
+            const player2SelectedName = player2Select.value;
+            
+            // Update player images
+            document.getElementById('player1Image').src = player1SelectedName ? 
+                `${apiBaseUrl}/player_image/${player1SelectedName}` : '';
+            document.getElementById('player2Image').src = player2SelectedName ? 
+                `${apiBaseUrl}/player_image/${player2SelectedName}` : '';
+        }
+
+        function updateStats(stats1, stats2) {
+            const statsHTML = Object.entries(stats1).map(([key, value1], index) => {
+                const value2 = stats2[key];
+                const delay = index * 0.1;
+                
+                const fixedWidth = 350;  // Fixed width for all bars
+                
+                const leftStyles = value1 >= value2 
+                    ? 'background-color: #7b2cbf; color: white;'
+                    : 'background-color: #f3e8ff; color: #4a154b;';
+                
+                const rightStyles = value2 >= value1
+                    ? 'background-color: #7b2cbf; color: white;'
+                    : 'background-color: #f3e8ff; color: #4a154b;';
+
+                return `
+                    <div class="stat-comparison" style="animation-delay: ${delay}s">
+                        <div style="width: ${fixedWidth}px; text-align: right;">
+                            <div class="value-container left-value stat-bar" style="${leftStyles} width: 100%; border: 2px solid black; border-right: none; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                                ${value1}
+                            </div>
+                        </div>
+                        <div class="stat-label">${key.replace('_', ' ')}</div>
+                        <div style="width: ${fixedWidth}px; text-align: left;">
+                            <div class="value-container right-value stat-bar" style="${rightStyles} width: 100%; border: 2px solid black; border-left: none; border-top-right-radius: 20px; border-bottom-right-radius: 20px;">
+                                ${value2}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            statsContainer.innerHTML = statsHTML;
+        }
+
+        async function compareStats() {
+            const player1 = player1Select.value;
+            const player2 = player2Select.value;
+            
+            if (!player1 || !player2) {
+                alert('Please select both players');
+                return;
+            }
+
+            loading.classList.add('active');
+            statsContainer.innerHTML = '';
+            
+            try {
+                const [stats1, stats2] = await Promise.all([
+                    fetchPlayerStats(player1),
+                    fetchPlayerStats(player2)
+                ]);
+                updateStats(stats1, stats2);
+            } catch (error) {
+                console.error('Error comparing stats:', error);
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        async function fetchPlayerStats(playerName) {
+            const response = await fetch(`${apiBaseUrl}/stats`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: playerName })
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch player stats');
+            return response.json();
+        }
+
+        document.querySelector('.compare-btn').addEventListener('click', compareStats);
+        player1Select.addEventListener('change', updatePlayerNames);
+        player2Select.addEventListener('change', updatePlayerNames);
+        window.addEventListener('load', loadPlayers);
+    </script>
+</body>
+</html>
+
