@@ -53,6 +53,9 @@
 <h2>Data Source</h2>
 <p>The player statistics are sourced from a CSV file (<code>batinfo(1).csv</code>) that contains various performance metrics for IPL players.</p>
 
+<h2>Images</h2>
+
+
 <h2>Contributing</h2>
 <p>Contributions are welcome! If you have suggestions for improvements or new features, feel free to open an issue or submit a pull request.</p>
 
