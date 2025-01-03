@@ -3,31 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPL Player Comparison Dashboard - README</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        h1, h2, h3 {
-            color: #6a1b9a;
-        }
-        code {
-            background-color: #e0e0e0;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-        pre {
-            background-color: #e0e0e0;
-            padding: 10px;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-    </style>
 </head>
 <body>
 
